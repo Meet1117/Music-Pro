@@ -33,6 +33,10 @@ export const usePlayerStore = create((set, get) => ({
   repeatMode: 'none', // 'none' | 'one' | 'all'
   isExpanded: false,
   progressInterval: null,
+  // Guest preview states
+  guestPreviewCount: parseInt(localStorage.getItem('guestPreviewCount')) || 0,
+  showPreviewModal: false,
+  previewTimeReached: false,
 
   // Play a song
   playSong: (song, queue = []) => {
@@ -185,4 +189,22 @@ export const usePlayerStore = create((set, get) => ({
       ? { ...s.currentSong, is_liked: !s.currentSong.is_liked }
       : null
   })),
+
+  // Guest preview management
+  setPreviewTimeReached: () => set({ previewTimeReached: true, showPreviewModal: true }),
+  
+  resetPreviewTimeReached: () => set({ previewTimeReached: false }),
+  
+  closePreviewModal: () => set({ showPreviewModal: false }),
+  
+  incrementGuestPreview: () => {
+    const newCount = get().guestPreviewCount + 1
+    localStorage.setItem('guestPreviewCount', newCount)
+    set({ guestPreviewCount: newCount })
+  },
+
+  resetGuestPreview: () => {
+    localStorage.setItem('guestPreviewCount', '0')
+    set({ guestPreviewCount: 0 })
+  },
 }))

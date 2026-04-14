@@ -2,11 +2,12 @@ import { usePlayerStore } from '../../store/playerStore'
 import { useAuthStore } from '../../store/authStore'
 import { songsApi } from '../../services/api'
 import { AddToPlaylistModal } from '../ui/AddToPlaylistModal'
+import LoginRequestModal from '../ui/LoginRequestModal'
 import {
   Play, Pause, SkipBack, SkipForward, Volume2, VolumeX,
   Shuffle, Repeat, Repeat1, Heart, ChevronUp, ListMusic, PlusCircle
 } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import toast from 'react-hot-toast'
 
 function EqualizerBars() {
@@ -25,12 +26,39 @@ export default function MiniPlayer() {
     isMuted, isShuffled, repeatMode,
     togglePlay, seek, setVolume, toggleMute,
     nextSong, prevSong, toggleShuffle, cycleRepeat,
-    setExpanded, toggleLikeCurrentSong
+    setExpanded, toggleLikeCurrentSong,
+    guestPreviewCount, showPreviewModal, previewTimeReached,
+    setPreviewTimeReached, resetPreviewTimeReached, closePreviewModal, 
+    incrementGuestPreview
   } = usePlayerStore()
 
   const { isLoggedIn } = useAuthStore()
   const [showVolume, setShowVolume] = useState(false)
   const [showAddToPlaylist, setShowAddToPlaylist] = useState(false)
+  const [previewedSongs, setPreviewedSongs] = useState(new Set())
+
+  // Track 30 second preview time for non-logged-in users
+  useEffect(() => {
+    if (!isLoggedIn() && currentSong && isPlaying && progress >= 30 && !previewTimeReached) {
+      setPreviewTimeReached()
+      togglePlay() // pause the song
+    }
+  }, [isLoggedIn, currentSong, isPlaying, progress, previewTimeReached, setPreviewTimeReached, togglePlay])
+
+  // Track preview songs for non-logged-in users
+  useEffect(() => {
+    if (!isLoggedIn() && currentSong && isPlaying && !previewedSongs.has(currentSong.id)) {
+      const newSet = new Set(previewedSongs)
+      newSet.add(currentSong.id)
+      setPreviewedSongs(newSet)
+      
+      // Only increment if this is a new preview
+      if (newSet.size <= 2) {
+        incrementGuestPreview()
+      }
+      resetPreviewTimeReached()
+    }
+  }, [isLoggedIn, currentSong?.id, isPlaying, previewedSongs])
 
   if (!currentSong) return null
 
@@ -48,6 +76,24 @@ export default function MiniPlayer() {
     } catch {
       toggleLikeCurrentSong() // revert
     }
+  }
+
+  // Handle next song for guests - show modal if reached preview limit
+  const handleNextSong = () => {
+    if (!isLoggedIn() && guestPreviewCount >= 2) {
+      setPreviewTimeReached()
+      return
+    }
+    nextSong()
+  }
+
+  // Handle previous song for guests
+  const handlePrevSong = () => {
+    if (!isLoggedIn() && guestPreviewCount >= 2) {
+      setPreviewTimeReached()
+      return
+    }
+    prevSong()
   }
 
   const RepeatIcon = repeatMode === 'one' ? Repeat1 : Repeat
@@ -135,7 +181,7 @@ export default function MiniPlayer() {
             </button>
 
             {/* Prev */}
-            <button onClick={prevSong} className="hidden md:flex items-center justify-center btn-icon w-9 h-9 text-[var(--text-secondary)] hover:text-white">
+            <button onClick={handlePrevSong} className="hidden md:flex items-center justify-center btn-icon w-9 h-9 text-[var(--text-secondary)] hover:text-white">
               <SkipBack size={18} fill="currentColor" />
             </button>
 
@@ -154,7 +200,7 @@ export default function MiniPlayer() {
             </button>
 
             {/* Next */}
-            <button onClick={nextSong} className="flex items-center justify-center btn-icon w-9 h-9 text-[var(--text-secondary)] hover:text-white">
+            <button onClick={handleNextSong} className="flex items-center justify-center btn-icon w-9 h-9 text-[var(--text-secondary)] hover:text-white">
               <SkipForward size={18} fill="currentColor" />
             </button>
 
@@ -235,6 +281,13 @@ export default function MiniPlayer() {
       </div>
 
       {showAddToPlaylist && <AddToPlaylistModal songId={currentSong.id} onClose={() => setShowAddToPlaylist(false)} />}
+      
+      {/* Login Request Modal for guest preview */}
+      <LoginRequestModal 
+        isOpen={showPreviewModal && !isLoggedIn()} 
+        onClose={closePreviewModal}
+        previewCount={guestPreviewCount}
+      />
     </div>
   )
 }

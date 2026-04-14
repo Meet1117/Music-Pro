@@ -44,7 +44,7 @@ export default function Home() {
       {/* Hero greeting */}
       <div className="mb-10">
         <h1 className="text-4xl font-bold text-[var(--text-primary)] mb-1">
-          {isLoggedIn() ? `${greeting()}, ${user?.display_name?.split(' ')[0] || user?.username} 👋` : 'Welcome to Music Pro'}
+          {isLoggedIn() ? `${greeting()}, ${user?.display_name?.split(' ')[0] || user?.username} 👋` : 'Welcome to MuSync'}
         </h1>
         <p className="text-[var(--text-muted)]">
           {isLoggedIn() ? 'Your personalized music experience awaits.' : 'Discover and stream premium music.'}

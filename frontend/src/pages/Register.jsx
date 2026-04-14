@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
+import { usePlayerStore } from '../store/playerStore'
 import { Mail, Lock, User, Eye, EyeOff, UserPlus } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 export default function Register() {
   const { register, isLoading } = useAuthStore()
+  const { resetGuestPreview } = usePlayerStore()
   const navigate = useNavigate()
   const [form, setForm] = useState({ username: '', email: '', password: '', display_name: '' })
   const [showPass, setShowPass] = useState(false)
@@ -18,7 +20,8 @@ export default function Register() {
     if (form.password.length < 6) { toast.error('Password must be at least 6 characters'); return }
     const result = await register(form)
     if (result.success) {
-      toast.success('Account created! Welcome to Music Pro 🎵')
+      toast.success('Account created! Welcome to MuSync 🎵')
+      resetGuestPreview() // Clear preview counter
       navigate('/')
     } else {
       toast.error(result.error)
@@ -28,7 +31,7 @@ export default function Register() {
   return (
     <div>
       <h1 className="text-2xl font-bold text-white mb-1">Create account</h1>
-      <p className="text-[var(--text-muted)] text-sm mb-7">Join Music Pro and start your music journey</p>
+      <p className="text-[var(--text-muted)] text-sm mb-7">Join MuSync and start your music journey</p>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-2 gap-3">

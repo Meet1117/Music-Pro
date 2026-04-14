@@ -24,6 +24,7 @@ const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'))
 const AdminSongs = lazy(() => import('./pages/admin/AdminSongs'))
 const AdminSingers = lazy(() => import('./pages/admin/AdminSingers'))
 const AdminUsers = lazy(() => import('./pages/admin/AdminUsers'))
+const Copyrights = lazy(() => import('./pages/Copyrights'))
 const NotFound = lazy(() => import('./pages/NotFound'))
 
 function ProtectedRoute({ children, adminOnly = false }) {
@@ -69,6 +70,7 @@ export default function App() {
           <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
           <Route path="/library" element={<ProtectedRoute><Library /></ProtectedRoute>} />
           <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+          <Route path="/copyrights" element={<Copyrights />} />
 
           {/* Admin */}
           <Route path="/admin" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />

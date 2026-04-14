@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
+import { usePlayerStore } from '../store/playerStore'
 import { Mail, Lock, Eye, EyeOff, LogIn } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 export default function Login() {
   const { login, isLoading } = useAuthStore()
+  const { resetGuestPreview } = usePlayerStore()
   const navigate = useNavigate()
   const [form, setForm] = useState({ email: '', password: '' })
   const [showPass, setShowPass] = useState(false)
@@ -16,6 +18,7 @@ export default function Login() {
     const result = await login(form.email, form.password)
     if (result.success) {
       toast.success('Welcome back!')
+      resetGuestPreview() // Clear preview counter
       navigate('/')
     } else {
       toast.error(result.error)
@@ -25,7 +28,7 @@ export default function Login() {
   return (
     <div>
       <h1 className="text-2xl font-bold text-white mb-1">Welcome back</h1>
-      <p className="text-[var(--text-muted)] text-sm mb-7">Sign in to your Music Pro account</p>
+      <p className="text-[var(--text-muted)] text-sm mb-7">Sign in to your MuSync account</p>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="relative">
