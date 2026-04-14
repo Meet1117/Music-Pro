@@ -141,7 +141,7 @@ export default function Profile() {
           </div>
           <div>
             <p className="text-sm font-semibold text-white">Admin Account</p>
-            <p className="text-xs text-[var(--text-muted)]">You have full admin access to MuSync</p>
+            <p className="text-xs text-[var(--text-muted)]">You have full admin access to MuSynx</p>
           </div>
         </div>
       )}

@@ -50,8 +50,8 @@ export default function App() {
   }, [])
 
   useEffect(() => {
-    const defaultTitle = 'MuSync — Feel the Music'
-    document.title = currentSong?.title ? `${currentSong.title} • MuSync` : defaultTitle
+    const defaultTitle = 'MuSynx — Feel the Music'
+    document.title = currentSong?.title ? `${currentSong.title} • MuSynx` : defaultTitle
 
     const defaultFavicon = '/favicon.svg'
     const hasSongImage = currentSong?.thumbnail && !currentSong.thumbnail.includes('placeholder-album.jpg')

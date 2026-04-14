@@ -20,7 +20,7 @@ export default function Register() {
     if (form.password.length < 6) { toast.error('Password must be at least 6 characters'); return }
     const result = await register(form)
     if (result.success) {
-      toast.success('Account created! Welcome to MuSync 🎵')
+      toast.success('Account created! Welcome to MuSynx 🎵')
       resetGuestPreview() // Clear preview counter
       navigate('/')
     } else {
@@ -31,7 +31,7 @@ export default function Register() {
   return (
     <div>
       <h1 className="text-2xl font-bold text-white mb-1">Create account</h1>
-      <p className="text-[var(--text-muted)] text-sm mb-7">Join MuSync and start your music journey</p>
+      <p className="text-[var(--text-muted)] text-sm mb-7">Join MuSynx and start your music journey</p>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-2 gap-3">

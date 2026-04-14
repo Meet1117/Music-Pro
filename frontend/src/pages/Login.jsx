@@ -28,7 +28,7 @@ export default function Login() {
   return (
     <div>
       <h1 className="text-2xl font-bold text-white mb-1">Welcome back</h1>
-      <p className="text-[var(--text-muted)] text-sm mb-7">Sign in to your MuSync account</p>
+      <p className="text-[var(--text-muted)] text-sm mb-7">Sign in to your MuSynx account</p>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="relative">

@@ -10,7 +10,7 @@ export default function Footer() {
         {/* Left side - Copyright */}
         <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-[var(--text-muted)] text-center sm:text-left">
           <Copyright size={14} className="flex-shrink-0" />
-          <span className="truncate">{currentYear} MuSync. All rights reserved.</span>
+          <span className="truncate">{currentYear} MuSynx. All rights reserved.</span>
         </div>
 
         {/* Right side - Designer credit and Links */}

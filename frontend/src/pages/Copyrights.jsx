@@ -23,7 +23,7 @@ export default function Copyrights() {
           <section className="glass-effect rounded-2xl p-6 sm:p-8">
             <h2 className="text-2xl font-bold text-white mb-4">Project Declaration</h2>
             <p className="mb-4">
-              <strong className="text-green-500">MuSync</strong> is a personal academic/educational project created by <strong>Meet Patel</strong>. This application is developed solely for educational, learning, and demonstration purposes as part of coursework and personal skill development. This is not a commercial product, and it is not intended for any commercial, profit-generating, or business use.
+              <strong className="text-green-500">MuSynx</strong> is a personal academic/educational project created by <strong>Meet Patel</strong>. This application is developed solely for educational, learning, and demonstration purposes as part of coursework and personal skill development. This is not a commercial product, and it is not intended for any commercial, profit-generating, or business use.
             </p>
             <p>
               This project is created to demonstrate understanding of full-stack web development, including frontend technologies (React, Vite, Tailwind CSS), backend development (PHP REST APIs), database management (MySQL), authentication systems (JWT), and cloud deployment (Vercel, Hostinger).
@@ -35,7 +35,7 @@ export default function Copyrights() {
             <h2 className="text-2xl font-bold text-white mb-4">Non-Commercial Use Policy</h2>
             <div className="space-y-3">
               <p>
-                <strong>MuSync is strictly for personal educational use only.</strong> You are not permitted to:
+                <strong>MuSynx is strictly for personal educational use only.</strong> You are not permitted to:
               </p>
               <ul className="list-disc list-inside space-y-2 ml-2">
                 <li>Use this application for commercial purposes or monetary gain</li>
@@ -52,7 +52,7 @@ export default function Copyrights() {
           <section className="glass-effect rounded-2xl p-6 sm:p-8">
             <h2 className="text-2xl font-bold text-white mb-4">Intellectual Property & Copyright Notice</h2>
             <p className="mb-4">
-              The source code, design, architecture, and all original content of <strong>MuSync</strong> are the intellectual property of <strong>Meet Patel</strong> and are provided "as-is" for educational examination and non-commercial usage only.
+              The source code, design, architecture, and all original content of <strong>MuSynx</strong> are the intellectual property of <strong>Meet Patel</strong> and are provided "as-is" for educational examination and non-commercial usage only.
             </p>
             <p className="mb-4">
               <strong>All copyrights to this application and its components are retained by Meet Patel.</strong> No part of this application may be reproduced, distributed, transmitted, displayed, published, or broadcast without the prior written permission of Meet Patel, except as permitted for educational and non-commercial purposes.
@@ -190,7 +190,7 @@ export default function Copyrights() {
           <section className="glass-effect rounded-2xl p-6 sm:p-8">
             <h2 className="text-2xl font-bold text-white mb-4">No License to Use Copyrighted Content</h2>
             <p className="mb-4">
-              By accessing or using MuSync, you acknowledge and agree that:
+              By accessing or using MuSynx, you acknowledge and agree that:
             </p>
             <ul className="list-disc list-inside space-y-2 ml-2 mb-4">
               <li>You do not obtain any license or right to copyrighted music or content</li>
@@ -275,7 +275,7 @@ export default function Copyrights() {
           <section className="glass-effect rounded-2xl p-6 sm:p-8">
             <h2 className="text-2xl font-bold text-white mb-4">No Affiliation or Endorsement</h2>
             <p className="mb-4">
-              MuSync is not affiliated with, endorsed by, or associated with any major music platform, record label, artist, or entertainment company. Any mention of artists, songs, or labels is purely for demonstration and educational purposes only.
+              MuSynx is not affiliated with, endorsed by, or associated with any major music platform, record label, artist, or entertainment company. Any mention of artists, songs, or labels is purely for demonstration and educational purposes only.
             </p>
             <p>
               This application does not imply any partnership or endorsement with Apple Music, Spotify, YouTube Music, or any other music streaming service or copyright holder.

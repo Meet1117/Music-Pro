@@ -18,7 +18,7 @@ export default function AuthLayout() {
             <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center glow-green">
               <Music2 size={20} className="text-white" />
             </div>
-            <span className="text-2xl font-bold gradient-text">MuSync</span>
+            <span className="text-2xl font-bold gradient-text">MuSynx</span>
           </Link>
 
           {/* Card */}
@@ -27,7 +27,7 @@ export default function AuthLayout() {
           </div>
 
           <p className="text-center text-xs text-[var(--text-muted)] mt-6">
-            © 2024 MuSync. Feel the Music.
+            © 2024 MuSynx. Feel the Music.
           </p>
         </div>
       </div>

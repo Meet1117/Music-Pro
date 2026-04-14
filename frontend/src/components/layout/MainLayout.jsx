@@ -41,7 +41,7 @@ export default function MainLayout() {
             <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center glow-green">
               <Music2 size={16} className="text-white" />
             </div>
-            <span className="text-lg font-bold gradient-text tracking-tight">MuSync</span>
+            <span className="text-lg font-bold gradient-text tracking-tight">MuSynx</span>
           </div>
         </div>
 
