@@ -1,0 +1,311 @@
+MUSIC PRO DEPLOYMENT GUIDE (GitHub + Vercel Frontend, Hostinger PHP/MySQL Backend)
+Date: 2026-04-14
+
+Goal
+- Frontend on Vercel
+- Backend (PHP + MySQL) on Hostinger
+- Behavior same as localhost
+
+Recommended production architecture
+- Frontend: https://yourdomain.com (Vercel)
+- API: https://api.yourdomain.com (Hostinger)
+- Database: Hostinger MySQL
+
+============================================================
+PART 0 - PRE-CHECKS (DO THIS FIRST)
+============================================================
+1) Confirm local app works completely before deploy.
+2) Confirm backend uploads are working locally.
+3) Keep one backup copy of your full project.
+4) Create or verify GitHub repository has latest code.
+
+============================================================
+PART 1 - PREPARE CODE FOR PRODUCTION (IMPORTANT)
+============================================================
+You MUST do these edits so production works exactly like localhost.
+
+A) Frontend API base URL (Vercel)
+File: frontend/src/services/api.js
+Current code uses baseURL: '/api' (works in local proxy).
+For production, use env variable fallback.
+
+Change axios baseURL to:
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
+  timeout: 15000,
+})
+
+Why:
+- Local: still works with '/api'
+- Production: uses VITE_API_BASE_URL (Hostinger API URL)
+
+B) Backend database connection (Hostinger)
+File: backend/config/database.php
+Current file uses macOS unix socket path (XAMPP only):
+mysql:unix_socket=/Applications/XAMPP/xamppfiles/var/mysql/mysql.sock
+
+This will FAIL on Hostinger.
+Use TCP DSN:
+
+$host = 'localhost';
+$port = '3306';
+$db_name = 'HOSTINGER_DB_NAME';
+$username = 'HOSTINGER_DB_USER';
+$password = 'HOSTINGER_DB_PASSWORD';
+$charset = 'utf8mb4';
+
+$dsn = "mysql:host={$host};port={$port};dbname={$db_name};charset={$charset}";
+
+Note:
+- Some Hostinger plans require a specific DB host (not localhost). Use hPanel value exactly.
+
+C) Backend upload URL must be absolute
+File: backend/config/config.php
+Current:
+define('UPLOAD_URL', '/uploads/');
+
+For split domains (frontend on Vercel, backend on Hostinger), set:
+define('UPLOAD_URL', 'https://api.yourdomain.com/uploads/');
+
+Why:
+- If kept relative, image/audio URLs may point to frontend domain and break.
+
+D) CORS allowlist (secure and stable)
+File: backend/config/config.php
+Current CORS mirrors any Origin. Better to allow only your frontend domains.
+
+Use this style:
+
+function setCORSHeaders(): void {
+    $allowed = [
+        'https://yourdomain.com',
+        'https://www.yourdomain.com',
+        'https://your-vercel-project.vercel.app'
+    ];
+
+    $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+    if (in_array($origin, $allowed, true)) {
+        header('Access-Control-Allow-Origin: ' . $origin);
+    }
+
+    header('Vary: Origin');
+    header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+    header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+    header('Access-Control-Allow-Credentials: true');
+    header('Content-Type: application/json; charset=UTF-8');
+
+    if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+        http_response_code(200);
+        exit;
+    }
+}
+
+E) Strong JWT secret
+File: backend/config/config.php
+Replace JWT_SECRET with a long random value.
+
+============================================================
+PART 2 - PUSH CODE TO GITHUB
+============================================================
+From project root:
+
+1) git add .
+2) git commit -m "Prepare production deployment"
+3) git push origin main
+
+============================================================
+PART 3 - DEPLOY BACKEND ON HOSTINGER (PHP + MySQL)
+============================================================
+1) Create subdomain for API
+- In Hostinger hPanel, create subdomain: api.yourdomain.com
+- Point it to backend public folder (for example public_html/api)
+
+2) Upload backend files
+- Upload contents of backend folder into subdomain document root
+- Required paths at server should include:
+  - /api/
+  - /config/
+  - /middleware/
+  - /uploads/
+  - /index.php
+  - /.htaccess
+
+3) Create MySQL database in Hostinger
+- Create database, user, password
+- Note exact DB host from hPanel
+
+4) Import schema
+- Use phpMyAdmin in Hostinger
+- Import database/schema.sql
+
+5) If your DB already existed before multi-singer feature
+- Run this SQL once:
+
+CREATE TABLE IF NOT EXISTS song_singers (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  song_id INT NOT NULL,
+  singer_id INT NOT NULL,
+  is_primary TINYINT(1) DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY unique_song_singer (song_id, singer_id),
+  FOREIGN KEY (song_id) REFERENCES songs(id) ON DELETE CASCADE,
+  FOREIGN KEY (singer_id) REFERENCES singers(id) ON DELETE CASCADE
+);
+
+6) Ensure uploads directory permissions
+- uploads folder: 755
+- files inside uploads: 644
+- If upload fails, temporarily test with 775 then reduce back safely.
+
+7) Update backend .htaccess for route rewrite
+File: backend/.htaccess
+Use this (keep php limits + add rewrite):
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  RewriteRule ^ index.php [L,QSA]
+</IfModule>
+
+<IfModule mod_php.c>
+  php_value upload_max_filesize 100M
+  php_value post_max_size 100M
+  php_value memory_limit 256M
+  php_value max_execution_time 300
+</IfModule>
+
+<IfModule mod_php7.c>
+  php_value upload_max_filesize 100M
+  php_value post_max_size 100M
+</IfModule>
+
+<IfModule mod_php8.c>
+  php_value upload_max_filesize 100M
+  php_value post_max_size 100M
+</IfModule>
+
+8) Set PHP version in Hostinger
+- Use PHP 8.1 or newer
+- Ensure PDO and pdo_mysql are enabled
+
+9) Backend smoke tests (browser/Postman)
+- https://api.yourdomain.com/api/songs?action=trending
+- https://api.yourdomain.com/api/singers?action=list
+If JSON appears, routing/API is good.
+
+============================================================
+PART 4 - DEPLOY FRONTEND ON VERCEL
+============================================================
+1) Import GitHub repo in Vercel
+- Vercel Dashboard -> Add New -> Project -> Import repository
+
+2) Vercel project settings
+- Framework Preset: Vite
+- Root Directory: frontend
+- Build Command: npm run build
+- Output Directory: dist
+
+3) Add environment variable in Vercel
+- Key: VITE_API_BASE_URL
+- Value: https://api.yourdomain.com/api
+- Apply to Production (and Preview if needed)
+
+4) SPA route fallback (important for refresh on deep URLs)
+Create file frontend/vercel.json with:
+
+{
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
+
+5) Deploy project in Vercel
+- Trigger deploy
+- Wait for successful build
+
+============================================================
+PART 5 - CONNECT CUSTOM DOMAIN
+============================================================
+1) Frontend domain to Vercel
+- Connect yourdomain.com and www.yourdomain.com in Vercel
+- Update DNS records as Vercel instructs
+
+2) API subdomain to Hostinger
+- Point api.yourdomain.com to Hostinger backend hosting
+
+3) SSL
+- Ensure SSL active on both:
+  - https://yourdomain.com
+  - https://api.yourdomain.com
+
+============================================================
+PART 6 - FINAL PRODUCTION CHECKLIST (DO NOT SKIP)
+============================================================
+1) Open website and test:
+- Register
+- Login
+- Logout
+- Profile update
+- Search
+- Play song
+- Like song
+- Follow singer
+- Playlist create/add/remove
+- History page
+- Admin create song upload
+
+2) Verify browser DevTools:
+- No CORS errors
+- API calls target api.yourdomain.com
+- Uploaded thumbnail/audio URLs open directly
+
+3) Verify page refresh works on routes:
+- /search
+- /song/ID
+- /admin/songs
+(If not, check frontend/vercel.json rewrite.)
+
+4) Verify backend upload limits
+- Upload a larger audio file and ensure no 413/500
+
+============================================================
+MOST COMMON PRODUCTION MISTAKES (AND FIX)
+============================================================
+1) Blank data on frontend
+- Cause: API baseURL still '/api' in production
+- Fix: use VITE_API_BASE_URL and redeploy frontend
+
+2) CORS blocked
+- Cause: origin not in backend allowlist
+- Fix: add Vercel/custom domain origin in config.php
+
+3) DB connection failed on Hostinger
+- Cause: still using unix_socket DSN
+- Fix: use host/port DSN from Part 1B
+
+4) Images/audio broken
+- Cause: UPLOAD_URL is relative
+- Fix: set UPLOAD_URL to absolute api domain URL
+
+5) API routes return 404
+- Cause: missing rewrite rules
+- Fix: update backend/.htaccess with RewriteRule to index.php
+
+6) Refresh on frontend route gives 404
+- Cause: no Vercel SPA rewrite
+- Fix: add frontend/vercel.json rewrites
+
+============================================================
+SAFE GO-LIVE ORDER
+============================================================
+1) Deploy backend first and test API URLs directly.
+2) Deploy frontend with correct VITE_API_BASE_URL.
+3) Connect custom domains.
+4) Run full checklist.
+
+If you follow this file exactly, your hosted app behavior will match localhost closely.

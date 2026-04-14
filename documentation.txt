@@ -1,0 +1,93 @@
+================================================================================
+                    MUSIC PRO - MUSIC STREAMING PLATFORM
+================================================================================
+A full-stack, responsive web application for streaming music, managing playlists, and discovering new artists, complete with a dedicated admin dashboard for content management. 
+
+---
+1. NON-TECHNICAL OVERVIEW
+---
+Music Pro is designed to be a comprehensive music streaming platform where users can:
+- Discover new songs by genre, mood, or singer.
+- Play, pause, and control music seamlessly with a persistent audio player.
+- Create their own playlists and "like" their favorite tracks.
+- Access a personalized library and profile.
+- Enjoy an intuitive, modern user interface.
+
+For Administrators, Music Pro provides a specialized dashboard to:
+- Manage the library of songs and singers (uploading, editing, deleting).
+- Oversee user accounts and platform statistics.
+
+---
+2. FEATURES & FUNCTIONALITY
+---
+User Features:
+- Authentication: Secure login and registration.
+- Persistent Audio Player: Music keeps playing seamlessly while navigating across different pages (Mini and Expanded player modes).
+- Search & Discovery: Search for songs, explore by genres or moods, and view dedicated singer profiles.
+- Playlist Management: Create custom playlists, add/remove songs, and save liked songs.
+- User Library: Centralized hub for all user-specific content (playlists, liked songs).
+
+Admin Features:
+- Admin Dashboard: Central control panel with overall platform metrics.
+- Content Management: Add, update, and remove Singers and Songs (including cover image and audio file uploads).
+- User Management: Oversee registered users on the platform.
+
+---
+3. TECHNICAL OVERVIEW & ARCHITECTURE
+---
+The system follows a standard Client-Server architecture. The frontend handles the UI and user interactions, while the backend exposes a RESTful API to communicate with a relational database.
+
+[ A. FRONTEND (Client Side) ]
+The frontend is a Single Page Application (SPA) built for speed and seamless transitions.
+- Environment: Node.js with Vite (Lightning-fast build tool and development server).
+- Core Framework: React 18 (Component-based UI development).
+
+Key Frontend Libraries & Their Purpose:
+- React Router DOM: Handles client-side routing (navigation without reloading the page).
+- Zustand: Lightweight state management (used for global states like `authStore.js` and `playerStore.js`).
+- Howler.js: The core audio library used for reliable, cross-browser audio playback.
+- Axios: Promise-based HTTP client for making API requests to the backend.
+- React Query (@tanstack/react-query): Handles server state, data fetching, caching, and synchronization.
+- Tailwind CSS: Utility-first CSS framework for rapid and responsive styled components.
+- Lucide React: Beautiful, consistent vector icons used throughout the UI.
+- React Hot Toast: For clean, non-intrusive notification popups (success/error messages).
+- React Slider: Custom slider components (used for volume and seek bars in the player).
+- Date-fns: Utilities for formatting and manipulating dates.
+
+[ B. BACKEND (Server Side) ]
+The backend runs on a traditional PHP stack, serving REST APIs and managing file uploads.
+- Language: PHP (Raw PHP handling API endpoints, authentication, and file operations).
+- Web Server: Apache (implied by the XAMPP environment).
+- Database: MySQL (Relational database storing users, songs, singers, playlists, etc.).
+
+Backend Structure & Purpose:
+- `/api`: Contains the distinct endpoints (`auth.php`, `songs.php`, `singers.php`, `playlists.php`, `admin.php`) that respond to frontend Axios requests.
+- `/config`: Database connection and general environment configurations.
+- `/middleware`: Interceptors (like `auth.php`) to verify user sessions/tokens before granting access to protected routes.
+- `/uploads`: Stores user-generated or admin-uploaded media files (singer images, song audio files, and covers).
+
+[ C. DATABASE (MySQL) ]
+- Features a structured schema (`database/schema.sql`) to link Users, Roles, Songs, Singers, and Playlists using foreign keys and relational logic.
+
+---
+4. PROJECT STRUCTURE
+---
+music-streaming/
+├── backend/                  # PHP REST API Server
+│   ├── api/                  # API Endpoints
+│   ├── config/               # DB and App Configuration
+│   ├── middleware/           # Security/Auth checks
+│   └── uploads/              # Media Storage (Songs, Images)
+├── database/
+│   └── schema.sql            # MySQL Database schema
+├── frontend/                 # React Application
+│   ├── package.json          # Frontend dependencies
+│   ├── vite.config.js        # Vite bundler config
+│   ├── tailwind.config.js    # Tailwind styling rules
+│   └── src/
+│       ├── components/       # Reusable UI parts (Player, Layouts, Admin)
+│       ├── pages/            # Main application views (Home, Login, Dashboard)
+│       ├── services/         # API integration (api.js)
+│       ├── store/            # Global state (Zustand stores)
+│       └── hooks/            # Custom React hooks (e.g., useDebounce)
+└── documentation.txt         # Project Overview (This file)
