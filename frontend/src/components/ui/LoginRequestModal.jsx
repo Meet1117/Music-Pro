@@ -20,8 +20,8 @@ export default function LoginRequestModal({ isOpen, onClose, previewCount }) {
       />
 
       {/* Modal */}
-      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-md mx-auto px-4">
-        <div className="glass-strong rounded-3xl p-6 sm:p-8 animate-in zoom-in duration-200 shadow-2xl">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+        <div className="relative w-full max-w-md glass-strong rounded-3xl p-6 sm:p-8 animate-in zoom-in duration-200 shadow-2xl">
           {/* Close button */}
           <button
             onClick={onClose}
@@ -52,19 +52,19 @@ export default function LoginRequestModal({ isOpen, onClose, previewCount }) {
           <div className="space-y-2 mb-8 bg-white/5 rounded-xl p-4">
             <div className="flex items-start gap-2.5">
               <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <div className="w-2 h-2 rounded-full bg-green-400" />
+                <div className="w-2 h-2 rounded-full bg-green-400" style={{ animation: 'dotHeartbeat 1.15s ease-in-out infinite' }} />
               </div>
               <span className="text-[var(--text-secondary)] text-sm">Unlimited song streaming</span>
             </div>
             <div className="flex items-start gap-2.5">
               <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <div className="w-2 h-2 rounded-full bg-green-400" />
+                <div className="w-2 h-2 rounded-full bg-green-400" style={{ animation: 'dotHeartbeat 1.15s ease-in-out 0.15s infinite' }} />
               </div>
               <span className="text-[var(--text-secondary)] text-sm">Create & manage playlists</span>
             </div>
             <div className="flex items-start gap-2.5">
               <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <div className="w-2 h-2 rounded-full bg-green-400" />
+                <div className="w-2 h-2 rounded-full bg-green-400" style={{ animation: 'dotHeartbeat 1.15s ease-in-out 0.3s infinite' }} />
               </div>
               <span className="text-[var(--text-secondary)] text-sm">Save your favorite songs</span>
             </div>
@@ -100,6 +100,27 @@ export default function LoginRequestModal({ isOpen, onClose, previewCount }) {
               Sign up free
             </button>
           </p>
+
+          <style>{`
+            @keyframes dotHeartbeat {
+              0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+              }
+              20% {
+                transform: scale(1.45);
+                opacity: 0.9;
+              }
+              40% {
+                transform: scale(1.2);
+                opacity: 0.85;
+              }
+              60% {
+                transform: scale(1.5);
+                opacity: 1;
+              }
+            }
+          `}</style>
         </div>
       </div>
     </>
