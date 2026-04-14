@@ -43,7 +43,7 @@ function GuestRoute({ children }) {
 
 export default function App() {
   const { fetchMe, isLoggedIn } = useAuthStore()
-  const { currentSong, isPlaying } = usePlayerStore()
+  const { currentSong } = usePlayerStore()
 
   useEffect(() => {
     if (isLoggedIn()) fetchMe()
@@ -51,23 +51,33 @@ export default function App() {
 
   useEffect(() => {
     const defaultTitle = 'MuSync — Feel the Music'
-    document.title = isPlaying && currentSong?.title
-      ? `${currentSong.title} • MuSync`
-      : defaultTitle
+    document.title = currentSong?.title ? `${currentSong.title} • MuSync` : defaultTitle
 
     const defaultFavicon = '/favicon.svg'
-    const iconHref = isPlaying && currentSong?.thumbnail && !currentSong.thumbnail.includes('placeholder-album.jpg')
-      ? currentSong.thumbnail
-      : defaultFavicon
+    const hasSongImage = currentSong?.thumbnail && !currentSong.thumbnail.includes('placeholder-album.jpg')
 
-    let icon = document.querySelector("link[rel='icon']")
-    if (!icon) {
-      icon = document.createElement('link')
-      icon.setAttribute('rel', 'icon')
-      document.head.appendChild(icon)
+    let songImage = hasSongImage ? currentSong.thumbnail : defaultFavicon
+    if (window.location.protocol === 'https:' && songImage.startsWith('http://')) {
+      songImage = songImage.replace('http://', 'https://')
     }
-    icon.setAttribute('href', iconHref)
-  }, [currentSong, isPlaying])
+
+    // Force-refresh favicon to avoid aggressive browser caching.
+    const faviconHref = `${songImage}${songImage.includes('?') ? '&' : '?'}v=${Date.now()}`
+
+    const upsertFavicon = (relValue) => {
+      let link = document.querySelector(`link[rel='${relValue}']`)
+      if (!link) {
+        link = document.createElement('link')
+        link.setAttribute('rel', relValue)
+        document.head.appendChild(link)
+      }
+      link.setAttribute('href', faviconHref)
+    }
+
+    upsertFavicon('icon')
+    upsertFavicon('shortcut icon')
+    upsertFavicon('apple-touch-icon')
+  }, [currentSong?.id, currentSong?.title, currentSong?.thumbnail])
 
   return (
     <Suspense fallback={<PageLoader />}>
