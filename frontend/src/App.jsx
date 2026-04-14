@@ -63,6 +63,18 @@ export default function App() {
 
     // Force-refresh favicon to avoid aggressive browser caching.
     const faviconHref = `${songImage}${songImage.includes('?') ? '&' : '?'}v=${Date.now()}`
+    const cleanUrl = songImage.split('?')[0].toLowerCase()
+
+    const resolveIconType = () => {
+      if (cleanUrl.endsWith('.png')) return 'image/png'
+      if (cleanUrl.endsWith('.jpg') || cleanUrl.endsWith('.jpeg')) return 'image/jpeg'
+      if (cleanUrl.endsWith('.webp')) return 'image/webp'
+      if (cleanUrl.endsWith('.ico')) return 'image/x-icon'
+      if (cleanUrl.endsWith('.svg')) return 'image/svg+xml'
+      return null
+    }
+
+    const iconType = resolveIconType()
 
     const upsertFavicon = (relValue) => {
       let link = document.querySelector(`link[rel='${relValue}']`)
@@ -72,11 +84,25 @@ export default function App() {
         document.head.appendChild(link)
       }
       link.setAttribute('href', faviconHref)
+
+      // Mobile browsers can ignore updated icons if type/sizes are stale from old SVG entries.
+      if (iconType) {
+        link.setAttribute('type', iconType)
+      } else {
+        link.removeAttribute('type')
+      }
+
+      if (relValue === 'apple-touch-icon' || relValue === 'apple-touch-icon-precomposed') {
+        link.setAttribute('sizes', '180x180')
+      } else {
+        link.setAttribute('sizes', '32x32')
+      }
     }
 
     upsertFavicon('icon')
     upsertFavicon('shortcut icon')
     upsertFavicon('apple-touch-icon')
+    upsertFavicon('apple-touch-icon-precomposed')
   }, [currentSong?.id, currentSong?.title, currentSong?.thumbnail])
 
   return (
