@@ -80,8 +80,8 @@ export default function Login() {
       {/* Demo credentials */}
       <div className="mt-5 glass rounded-xl p-3 text-xs text-center">
         <p className="text-[var(--text-muted)] mb-1">Demo account:</p>
-        <p className="text-fuchsia-300 font-mono">demo@melodia.com / demo123</p>
-        <p className="text-fuchsia-300 font-mono mt-0.5">admin@melodia.com / admin123</p>
+        <p className="text-fuchsia-300 font-mono">demo@musynx.com / demo123</p>
+        <p className="text-fuchsia-300 font-mono mt-0.5">admin@musynx.com / admin123</p>
       </div>
 
       <p className="text-center text-sm text-[var(--text-muted)] mt-6">
