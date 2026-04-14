@@ -1,6 +1,7 @@
 import { useEffect, lazy, Suspense } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAuthStore } from './store/authStore'
+import { usePlayerStore } from './store/playerStore'
 import MainLayout from './components/layout/MainLayout'
 import AuthLayout from './components/layout/AuthLayout'
 import PageLoader from './components/ui/PageLoader'
@@ -42,10 +43,31 @@ function GuestRoute({ children }) {
 
 export default function App() {
   const { fetchMe, isLoggedIn } = useAuthStore()
+  const { currentSong, isPlaying } = usePlayerStore()
 
   useEffect(() => {
     if (isLoggedIn()) fetchMe()
   }, [])
+
+  useEffect(() => {
+    const defaultTitle = 'MuSync — Feel the Music'
+    document.title = isPlaying && currentSong?.title
+      ? `${currentSong.title} • MuSync`
+      : defaultTitle
+
+    const defaultFavicon = '/favicon.svg'
+    const iconHref = isPlaying && currentSong?.thumbnail && !currentSong.thumbnail.includes('placeholder-album.jpg')
+      ? currentSong.thumbnail
+      : defaultFavicon
+
+    let icon = document.querySelector("link[rel='icon']")
+    if (!icon) {
+      icon = document.createElement('link')
+      icon.setAttribute('rel', 'icon')
+      document.head.appendChild(icon)
+    }
+    icon.setAttribute('href', iconHref)
+  }, [currentSong, isPlaying])
 
   return (
     <Suspense fallback={<PageLoader />}>
